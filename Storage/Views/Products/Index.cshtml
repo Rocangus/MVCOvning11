@@ -8,6 +8,12 @@
 
 <p>
     <a asp-action="Create">Create New</a>
+
+    <form asp-controller="Products" asp-action="Index">
+        <label for="categoryField">Category:</label>
+        <input type="text" name="category" id="categoryField" placeholder="Category" />
+        <input type="submit" value="Filter" />
+    </form>
 </p>
 <table class="table">
     <thead>

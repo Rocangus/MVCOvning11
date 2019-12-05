@@ -19,9 +19,16 @@ namespace Storage.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string category)
         {
-            return View(await _context.Product.ToListAsync());
+            var products = from p in _context.Product select p; 
+
+            if (!String.IsNullOrEmpty(category))
+            {
+                products = products.Where(s => s.Category.Equals(category));
+            }
+
+            return View(await products.ToListAsync());
         }
 
         // GET: Products/Details/5
@@ -53,7 +60,7 @@ namespace Storage.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,OrderDate,Category,Shelf,Count,Description")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,OrderDate,Category,Shelf,Count,Description")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +92,7 @@ namespace Storage.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,OrderDate,Category,Shelf,Count,Description")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,OrderDate,Category,Shelf,Count,Description")] Product product)
         {
             if (id != product.Id)
             {
@@ -150,9 +157,9 @@ namespace Storage.Controllers
         }
 
         // GET: Products/Values
-        public IActionResult GetProductValues()
+        public IActionResult Values()
         {
-            return View();
+            return View(GetProductViews());
         }
 
         public IEnumerable<ProductViewModel> GetProductViews()
@@ -162,7 +169,12 @@ namespace Storage.Controllers
 
             foreach (var product in products.Result.ToList())
             {
-                var name = product.Name;
+                var view = new ProductViewModel();
+                view.Name = product.Name;
+                view.Price = product.Price;
+                view.Count = product.Count;
+                view.InventoryValue = product.Price * product.Count;
+                views.Add(view);
             }
 
             return views;

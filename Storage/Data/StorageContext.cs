@@ -13,6 +13,7 @@ namespace Storage.Models
         {
         }
 
-        public DbSet<Storage.Models.Product> Product { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Category> Categories { get; set; }
     }
 }
