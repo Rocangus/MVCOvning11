@@ -148,5 +148,24 @@ namespace Storage.Controllers
         {
             return _context.Product.Any(e => e.Id == id);
         }
+
+        // GET: Products/Values
+        public IActionResult GetProductValues()
+        {
+            return View();
+        }
+
+        public IEnumerable<ProductViewModel> GetProductViews()
+        {
+            var products = _context.Product.ToListAsync();
+            var views = new List<ProductViewModel>();
+
+            foreach (var product in products.Result.ToList())
+            {
+                var name = product.Name;
+            }
+
+            return views;
+        }
     }
 }

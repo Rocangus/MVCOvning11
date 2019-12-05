@@ -11,6 +11,8 @@ namespace Storage.Models
         public int Id { get; set; }
         [MaxLength(30)]
         public string Name { get; set; }
+        [Range(0, int.MaxValue)]
+        public int Price { get; set; }
         [DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
         [Required]
