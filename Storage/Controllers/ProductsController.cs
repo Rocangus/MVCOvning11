@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Storage.Models;
 
@@ -19,16 +20,39 @@ namespace Storage.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(string category)
+        public IActionResult Index(string name, string category)
         {
-            var products = from p in _context.Product select p; 
+            var products = from p in _context.Product select p;
 
-            if (!String.IsNullOrEmpty(category))
+            List<string> categories = new List<string>();
+            categories.Add("Category");
+
+            foreach (var item in products)
+            {
+                if (!categories.Contains(item.Category))
+                {
+                    categories.Add(item.Category);
+                }
+            }
+
+            if(!string.IsNullOrEmpty(category) && category.Equals("Category"))
+            {
+                category = "";
+            }
+            if (!string.IsNullOrEmpty(name))
+            {
+                products = products.Where(s => s.Name.Contains(name));
+            }
+            if (!string.IsNullOrEmpty(category))
             {
                 products = products.Where(s => s.Category.Equals(category));
             }
+            if (!(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(category)))
+            {
+                products = products.Where(s => s.Name.Contains(name) && s.Category.Equals(category));
+            }
 
-            return View(await products.ToListAsync());
+            return View((products.ToList(), categories));
         }
 
         // GET: Products/Details/5
@@ -65,6 +89,10 @@ namespace Storage.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(product);
+                if (!_context.Categories.ToList().Contains(new Category() { Name = product.Name })) 
+                {
+                    _context.Add(new Category() { Name = product.Name });
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

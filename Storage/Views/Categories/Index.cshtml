@@ -1,0 +1,8 @@
+﻿@model IEnumerable<Storage.Models.Category>
+
+    <select>
+        @foreach (var item in Model)
+        {
+            <option name="category">@item.Name</option>
+        }
+    </select>
