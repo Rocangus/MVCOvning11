@@ -198,14 +198,19 @@ namespace Storage.Controllers
             foreach (var product in products.Result.ToList())
             {
                 var view = new ProductViewModel();
-                view.Name = product.Name;
-                view.Price = product.Price;
-                view.Count = product.Count;
-                view.InventoryValue = product.Price * product.Count;
-                views.Add(view);
+                PopulateViewModelData(views, product, view);
             }
 
             return views;
+        }
+
+        private static void PopulateViewModelData(List<ProductViewModel> views, Product product, ProductViewModel view)
+        {
+            view.Name = product.Name;
+            view.Price = product.Price;
+            view.Count = product.Count;
+            view.InventoryValue = product.Price * product.Count;
+            views.Add(view);
         }
     }
 }
